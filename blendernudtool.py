@@ -7,10 +7,11 @@ Credit:
         @Smb123w64gb
     Blender Script (twitter):
         @Astril_Knight
+        @Smb123w64gb
 """
 bl_info = {
     "name": "Nud Tool",
-    "author": "Astril Knight",
+    "author": "Astril & Smb123w64gb",
     "version": (0, 2),
     "blender": (2, 75, 0),
     "location": "Properties > Scene",
