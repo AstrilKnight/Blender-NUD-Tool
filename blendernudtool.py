@@ -639,7 +639,7 @@ def readModel():
         elif VertexSize_array[z] == 0x46:
             name = "0x46"
             if UVSize_array[z] == 0x10:
-                for x in VertexAmount_array[z]:
+                for x in range(VertexAmount_array[z]):
                     colorr = 127
                     colorg = 127
                     colorb = 127
@@ -989,7 +989,7 @@ def readModel():
         bpy.context.scene.objects.link(myobject)
         mymesh.from_pydata(Vert_array, [], Face_array)
         mymesh.update(calc_edges=True)
-        mymesh.uv_textures.new("UV_Layer1")
+        '''mymesh.uv_textures.new("UV_Layer1")
         bm = bmesh.new()
         bm.from_mesh(mymesh)
         if not UV_array is None:
@@ -998,7 +998,7 @@ def readModel():
                 for loop in face.loops:
                     uv = UV_array[loop.vert.index]
                     loop[uv_layer].uv = (uv[0], uv[1])
-        bm.to_mesh(mymesh)
+        bm.to_mesh(mymesh)'''
 
     
     bpy.ops.object.select_all()
@@ -1142,8 +1142,6 @@ def injectModel():
                 f.seek(0x08, 1)
                 if vert_size == 0x46:
                     f.seek(0x08, 1)
-                    if uv_size == 0x10:
-                            f.seek(0x04, 1)
                 elif vert_size == 0x47:
                     f.seek(0x18, 1)
         f.seek(next_poly_addr)
