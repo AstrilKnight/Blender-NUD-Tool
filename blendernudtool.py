@@ -11,7 +11,7 @@ Credit:
 bl_info = {
     "name": "Nud Tool",
     "author": "Astril Knight",
-    "version": (0, 1),
+    "version": (0, 2),
     "blender": (2, 75, 0),
     "location": "Properties > Scene",
     "description": "Tool for working with NUD files",
@@ -20,7 +20,8 @@ bl_info = {
     }
 
 # Util----------------------------------------------------
-import struct, binascii, os
+import struct, binascii, os, bmesh
+import numpy as np
 
 def clearConsole():
     clear = lambda: os.system('cls')
@@ -56,7 +57,9 @@ def readfloatle(file):
 
 def readhalffloatbe(f):
     # pos = f.tell()
-    return struct.unpack(">H", f.read(2))[0]
+    raw = f.read(2)
+    float16 = float(np.frombuffer(raw, dtype=np.float16))
+    return float16
 
 
 def readhalffloatle(f):
@@ -876,8 +879,8 @@ def readModel():
                     tu3 = readhalffloatbe(nud) * 2
                     tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
                     UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    UV3_array.append([tu, tv, 0])
+                    UV2_array.append([tu2, tv2, 0])
+                    UV3_array.append([tu3, tv3, 0])
                     Color_Array.append([colorr, colorg, colorb])
                     Alpha_Array.append(colora)
             if UVSize_array[z] == 0x42:
@@ -986,6 +989,17 @@ def readModel():
         bpy.context.scene.objects.link(myobject)
         mymesh.from_pydata(Vert_array, [], Face_array)
         mymesh.update(calc_edges=True)
+        mymesh.uv_textures.new("UV_Layer1")
+        bm = bmesh.new()
+        bm.from_mesh(mymesh)
+        if not UV_array is None:
+            uv_layer = bm.loops.layers.uv.new()
+            for face in bm.faces:
+                for loop in face.loops:
+                    uv = UV_array[loop.vert.index]
+                    loop[uv_layer].uv = (uv[0], uv[1])
+        bm.to_mesh(mymesh)
+
     
     bpy.ops.object.select_all()
     bpy.ops.object.shade_smooth()
