@@ -10,7 +10,7 @@ bl_info = {
     "description": "Tool for working with NUD files",
     "warning": "Only mesh editing currently able",
     "category": "User Interface",
-    }
+}
 
 from bpy.props import (StringProperty,
                        PointerProperty,
@@ -78,6 +78,7 @@ class RunInjectCode(bpy.types.Operator):
     def poll(cls, context):
         return False
     """
+
     def execute(self, context):
         injectModel()
         return {'FINISHED'}

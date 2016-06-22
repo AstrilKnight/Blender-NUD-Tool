@@ -1,9 +1,12 @@
-import struct, os
+import struct
+import os
 import numpy as np
+
 
 def clearConsole():
     clear = lambda: os.system('cls')
     clear()
+
 
 def readByte(file):
     return struct.unpack("B", file.read(1))[0]
@@ -44,11 +47,10 @@ def readhalffloatle(f):
     # pos = f.tell()
     return struct.unpack("<H", f.read(2))[0]
 
-
-def getString(file):
+def readString(f, term=b'\0'):
     result = ""
-    tmpChar = file.read(1).decode("ASCII")
+    tmpChar = f.read(1).decode("ASCII")
     while ord(tmpChar) != 0:
-        result += tmpChar.decode("ASCII")
-        tmpChar = file.read(1)
+        result += tmpChar
+        tmpChar = f.read(1).decode("ASCII")
     return result

@@ -10,7 +10,7 @@ Credit:
         @Smb123w64gb
 """
 
-import bmesh #, binascii
+import bmesh  # , binascii
 from util import *
 
 # ReadData--------------------------------------------------------
@@ -18,6 +18,7 @@ from copy import deepcopy as dp
 from mathutils import Vector
 import bpy
 import shutil
+
 
 def readModel():
     clearConsole()
@@ -30,8 +31,16 @@ def readModel():
     # nut = open('model.nut','rb')
     colormult = bpy.context.scene.SSB4UMT.colormult
 
-    Bone_Info_Struct = {'Bone1': None, 'Bone2': None, 'Bone3': None, 'Bone4': None}
-    Weight_Info_Struct = {'Weight1': None, 'Weight2': None, 'Weight3': None, 'Weight4': None}
+    Bone_Info_Struct = {
+        'Bone1': None,
+        'Bone2': None,
+        'Bone3': None,
+        'Bone4': None}
+    Weight_Info_Struct = {
+        'Weight1': None,
+        'Weight2': None,
+        'Weight3': None,
+        'Weight4': None}
     weight_data_struct = {'boneids': None, 'weights': None}
 
     BoneCount = []
@@ -217,7 +226,7 @@ def readModel():
 
         if VertexSize_array[z] == 0x00:
             name = "0x00"
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = readfloatbe(nud)
                 vy = readfloatbe(nud)
                 vz = readfloatbe(nud)
@@ -235,7 +244,7 @@ def readModel():
                 Weight3 = 0
                 Weight4 = 0
                 if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                    z] == 0x42:
+                        z] == 0x42:
                     colorr = readByte(nud)
                     colorg = readByte(nud)
                     colorb = readByte(nud)
@@ -271,12 +280,16 @@ def readModel():
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         elif VertexSize_array[z] == 0x06:
             name = "0x06"
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = readfloatbe(nud)
                 vy = readfloatbe(nud)
                 vz = readfloatbe(nud)
@@ -297,7 +310,7 @@ def readModel():
                 colorb = 255
                 colora = 255
                 if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                    z] == 0x42:
+                        z] == 0x42:
                     colorr = readByte(nud)
                     colorg = readByte(nud)
                     colorb = readByte(nud)
@@ -333,12 +346,16 @@ def readModel():
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         elif VertexSize_array[z] == 0x07:
             name = "0x07"
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = readfloatbe(nud)
                 vy = readfloatbe(nud)
                 vz = readfloatbe(nud)
@@ -369,7 +386,7 @@ def readModel():
                 colorb = 255
                 colora = 255
                 if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                    z] == 0x42:
+                        z] == 0x42:
                     colorr = readByte(nud)
                     colorg = readByte(nud)
                     colorb = readByte(nud)
@@ -403,12 +420,16 @@ def readModel():
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         elif VertexSize_array[z] == 0x08:
             name = "0x08"
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = 0
                 vy = 0
                 vz = 0
@@ -432,7 +453,7 @@ def readModel():
                 tu = readhalffloatbe(nud) * 2
                 tv = readhalffloatbe(nud) * 2
                 if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                    z] == 0x42:
+                        z] == 0x42:
                     colorr = readByte(nud)
                     colorg = readByte(nud)
                     colorb = readByte(nud)
@@ -466,8 +487,12 @@ def readModel():
                 Color_Array.append([colorr, colorg, colorb])
                 Alpha_Array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
         elif VertexSize_array[z] == 0x11:
             if UVSize_array[z] == 0x10:
                 for x in range(VertexAmount_array[z]):
@@ -487,33 +512,34 @@ def readModel():
                             colorb = 255
                         tu = readfloatbe(nud) * 2
                         tv = ((readfloatbe(nud) * 2) * -1) + 1
-                        UV_array.append([tu,tv,0])
-                        Color_Array.append([colorr,colorg,colorb])
+                        UV_array.append([tu, tv, 0])
+                        Color_Array.append([colorr, colorg, colorb])
                         Alpha_Array.append(colora)
         elif VertexSize_array[z] == 0x12:
             for x in range(VertexAmount_array[z]):
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                        tu = readfloatbe(nud) * 2
-                        tv = ((readfloatbe(nud) * 2) * -1) + 1
-                        UV_array.append([tu,tv,0])
-                        Color_Array.append([colorr,colorg,colorb])
-                        Alpha_Array.append(colora)
+                colorr = readByte(nud)
+                colorg = readByte(nud)
+                colorb = readByte(nud)
+                colora = readByte(nud) / 127
+                if colormult == True:
+                    colorr = colorr * 2
+                    colorg = colorg * 2
+                    colorb = colorb * 2
+                    if colorr >= 254:
+                        colorr = 255
+                    if colorg >= 254:
+                        colorg = 255
+                    if colorb >= 254:
+                        colorb = 255
+                    tu = readfloatbe(nud) * 2
+                    tv = ((readfloatbe(nud) * 2) * -1) + 1
+                    UV_array.append([tu, tv, 0])
+                    Color_Array.append([colorr, colorg, colorb])
+                    Alpha_Array.append(colora)
         elif VertexSize_array[z] == 0x40:
             name = "0x40"
-            if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[z] == 0x42:
+            if UVSize_array[z] == 0x12 or UVSize_array[
+                    z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[z] == 0x42:
                 colorr = readByte(nud)
                 colorg = readByte(nud)
                 colorb = readByte(nud)
@@ -543,7 +569,7 @@ def readModel():
                 tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
                 UV4_array.append([tu4, tv4, 0])
             nud.seek(VertexAddStart_array[z])
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = readfloatbe(nud)
                 vy = readfloatbe(nud)
                 vz = readfloatbe(nud)
@@ -558,8 +584,12 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         elif VertexSize_array[z] == 0x46:
             name = "0x46"
@@ -689,7 +719,7 @@ def readModel():
                     Alpha_Array.append(colora)
 
             nud.seek(VertexAddStart_array[z])
-            for x in range( VertexAmount_array[z]):
+            for x in range(VertexAmount_array[z]):
                 vx = readfloatbe(nud)
                 vy = readfloatbe(nud)
                 vz = readfloatbe(nud)
@@ -707,8 +737,12 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         elif VertexSize_array[z] == 0x47:
             name = "0x47"
@@ -866,8 +900,12 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2, "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1, "Weight2": Weight2, "Weight3": Weight3, "Weight4": Weight4})
+                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
+                                 "Bone3": Bone3, "Bone4": Bone4})
+                W1_array.append({"Weight1": Weight1,
+                                 "Weight2": Weight2,
+                                 "Weight3": Weight3,
+                                 "Weight4": Weight4})
 
         vert_length = len(Vert_array)
         nud.seek(PolyStart_array[z])
@@ -890,12 +928,12 @@ def readModel():
                     f3 += 1
                     FaceDirection *= -1
                     if f1 != f2 and f2 != f3 and f3 != f1:
-                        #if f1 >= vert_length or f2 >= vert_length or f3 >= vert_length:
+                        # if f1 >= vert_length or f2 >= vert_length or f3 >= vert_length:
                         #    pass
                         if FaceDirection > 0:
-                            Face_array.append([f3-1,f2-1,f1-1])
+                            Face_array.append([f3 - 1, f2 - 1, f1 - 1])
                         else:
-                            Face_array.append([f2-1,f3-1,f1-1])
+                            Face_array.append([f2 - 1, f3 - 1, f1 - 1])
                     f1 = f2
                     f2 = f3
         elif PolySize_array[z] == 0x40:
@@ -903,11 +941,11 @@ def readModel():
                 fa = readu16be(nud)
                 fb = readu16be(nud)
                 fc = readu16be(nud)
-                #if fa >= vert_length or fb >= vert_length or fc >= vert_length:
+                # if fa >= vert_length or fb >= vert_length or fc >= vert_length:
                 #    break
                 Face_array.append([fa, fb, fc])
         nud.seek(NameClumpStart + PolyName_array[z])
-        name = readstring(nud)
+        name = readString(nud)
         mymesh = bpy.data.meshes.new(name)
         myobject = bpy.data.objects.new(name, mymesh)
         myobject.location = bpy.context.scene.cursor_location
@@ -930,35 +968,39 @@ def readModel():
     bpy.ops.object.select_all()
     print("import successful!")
 
-#Inject code
+# Inject code
+
+
 def injectModel():
     class poly(object):
-    	def __init__(self, name, id):
-    		self.name = name
-    		self.id = id
-    		self.vertexCoords = []
+
+        def __init__(self, name, id):
+            self.name = name
+            self.id = id
+            self.vertexCoords = []
 
     clearConsole()
-    shutil.copy2(bpy.context.scene.SSB4UMT.path + 'model.nud', bpy.context.scene.SSB4UMT.out)
+    shutil.copy2(bpy.context.scene.SSB4UMT.path +
+                 'model.nud', bpy.context.scene.SSB4UMT.out)
     print("Nud reference created")
 
     polyNames_tmp = []
     polyNames = []
     replacePolys = []
 
-    #Grab names of ordered objects
+    # Grab names of ordered objects
     for i in bpy.context.scene.objects:
         polyNames_tmp.append(str(i)[21:-3])
-    #Reverse objects order to original
+    # Reverse objects order to original
     for i in reversed(polyNames_tmp):
         polyNames.append(i)
-    #Create poly structure for inject
-    for polyName, polynum in zip(polyNames,range(len(polyNames))):
-        replacePolys.append(poly(polyName,polynum))
+    # Create poly structure for inject
+    for polyName, polynum in zip(polyNames, range(len(polyNames))):
+        replacePolys.append(poly(polyName, polynum))
         for vert in bpy.context.scene.objects[polyName].data.vertices:
             tmpref = list(vert.co)
             for x in range(3):
-                tmpref[x] = str(round(tmpref[x],5))
+                tmpref[x] = str(round(tmpref[x], 5))
                 if x != 0:
                     tmpref[x] = ' ' + tmpref[x]
             tmpref.append(' ')
@@ -981,7 +1023,7 @@ def injectModel():
     bodygroups = {}
     for i in range(polyset_count):
         for j in range(8):
-            f.seek(4,1)
+            f.seek(4, 1)
         f.tell()
         name_start = readu32be(f)
         identifiera = readu32be(f)
@@ -1022,7 +1064,7 @@ def injectModel():
         bodygroup_id = readu32be(f)
         bodygroups[bodygroup_id] = poly['pgroup']
         f.seek(name_clump_start + poly['name'])
-        poly_name = readstring(f)
+        poly_name = readString(f)
         f.seek(vert_start)
         for j in range(vert_count):
             if vert_size == 0x08 or vert_size >= 0x40:
@@ -1031,8 +1073,11 @@ def injectModel():
                 vz = 0
             if not vert_size >= 0x40:
                 for v in range(3):
-                    #print("J:",j)
-                    f.write(struct.pack(">f", float(replacePolys[i].vertexCoords[j][v])))
+                    # print("J:",j)
+                    f.write(
+                        struct.pack(
+                            ">f", float(
+                                replacePolys[i].vertexCoords[j][v])))
             if vert_size == 0x00:
                 f.seek(0x04, 1)
             elif vert_size == 0x06:
@@ -1042,7 +1087,7 @@ def injectModel():
             elif vert_size == 0x08:
                 f.seek(0x11, 1)
             if vert_size == 0x00 or \
-                (uv_size == 0x12 or uv_size == 0x22 or uv_size == 0x42):
+                    (uv_size == 0x12 or uv_size == 0x22 or uv_size == 0x42):
                 f.seek(0x04, 1)
             if uv_size >= 0x12 or vert_size == 0x06:
                 f.seek(0x04, 1)
@@ -1056,8 +1101,11 @@ def injectModel():
             f.seek(vert_add_start)
             for j in range(vert_count):
                 for v in range(3):
-                    #print("J:",j)
-                    f.write(struct.pack(">f", float(replacePolys[i].vertexCoords[j][v])))
+                    # print("J:",j)
+                    f.write(
+                        struct.pack(
+                            ">f", float(
+                                replacePolys[i].vertexCoords[j][v])))
                 if vert_size == 0x40:
                     f.seek(0x04, 1)
                 f.seek(0x08, 1)
