@@ -9,81 +9,9 @@ Credit:
         @Astril_Knight
         @Smb123w64gb
 """
-bl_info = {
-    "name": "Nud Tool",
-    "author": "Astril & Smb123w64gb",
-    "version": (0, 2),
-    "blender": (2, 75, 0),
-    "location": "Properties > Scene",
-    "description": "Tool for working with NUD files",
-    "warning": "Only mesh editing currently able",
-    "category": "User Interface",
-    }
 
-# Util----------------------------------------------------
-import struct, binascii, os, bmesh
-import numpy as np
-
-def clearConsole():
-    clear = lambda: os.system('cls')
-    clear()
-    
-def readByte(file):
-    return struct.unpack("B", file.read(1))[0]
-
-
-def readu16be(file):
-    return struct.unpack(">H", file.read(2))[0]
-
-
-def readu16le(file):
-    return struct.unpack("<H", file.read(2))[0]
-
-
-def readu32be(file):
-    return struct.unpack(">I", file.read(4))[0]
-
-
-def readu32le(file):
-    return struct.unpack("<I", file.read(4))[0]
-
-
-def readfloatbe(file):
-    return struct.unpack(">f", file.read(4))[0]
-
-
-def readfloatle(file):
-    return struct.unpack("<f", file.read(4))[0]
-
-
-def readhalffloatbe(f):
-    # pos = f.tell()
-    raw = f.read(2)
-    float16 = float(np.frombuffer(raw, dtype=np.float16))
-    return float16
-
-
-def readhalffloatle(f):
-    # pos = f.tell()
-    return struct.unpack("<H", f.read(2))[0]
-
-
-def getString(file):
-    result = ""
-    tmpChar = file.read(1)
-    while ord(tmpChar) != 0:
-        result += tmpChar.decode("ASCII")
-        tmpChar = file.read(1)
-    return result
-
-
-def readstring(f, term=b'\0'):
-    result = ""
-    tmpChar = f.read(1).decode("ASCII")
-    while ord(tmpChar) != 0:
-        result += tmpChar
-        tmpChar = f.read(1).decode("ASCII")
-    return result
+import bmesh #, binascii
+from util import *
 
 # ReadData--------------------------------------------------------
 from copy import deepcopy as dp
@@ -94,12 +22,11 @@ import shutil
 def readModel():
     clearConsole()
     nud = open(bpy.context.scene.SSB4UMT.path + 'model.nud', 'rb')
-    bpy.context.scene.SSB4UMT.vbnEnable = False
     if bpy.context.scene.SSB4UMT.vbnEnable == True:
         vbn = open(bpy.context.scene.SSB4UMT.path + 'model.vbn', 'rb')
     else:
         vbn = None
-        
+
     # nut = open('model.nut','rb')
     colormult = bpy.context.scene.SSB4UMT.colormult
 
@@ -264,8 +191,6 @@ def readModel():
                 Rotation_array.append([rx,ry,rz])
                 Scale_array.append([sx,sy,sz])
 
-
-
         elif VBN == 541999702:
             #Big Endian
             print("VBN Verified")
@@ -274,7 +199,6 @@ def readModel():
             raise ValueError("Not a valid VBN file")
     else:
         print("VBN feature disabled")
-
     """
     for z in range(ObjCount):
         Face_array = []
@@ -973,7 +897,7 @@ def readModel():
                         else:
                             Face_array.append([f2-1,f3-1,f1-1])
                     f1 = f2
-                    f2 = f3    
+                    f2 = f3
         elif PolySize_array[z] == 0x40:
             for x in range(0, (PolyAmount_array[z] // 3)):
                 fa = readu16be(nud)
@@ -1001,19 +925,13 @@ def readModel():
                     loop[uv_layer].uv = (uv[0], uv[1])
         bm.to_mesh(mymesh)'''
 
-    
     bpy.ops.object.select_all()
     bpy.ops.object.shade_smooth()
     bpy.ops.object.select_all()
     print("import successful!")
-    
-
 
 #Inject code
 def injectModel():
-    """
-    If you are reading this. I didn't follow PEP8. Don't hate me :(
-    """
     class poly(object):
     	def __init__(self, name, id):
     		self.name = name
@@ -1023,16 +941,18 @@ def injectModel():
     clearConsole()
     shutil.copy2(bpy.context.scene.SSB4UMT.path + 'model.nud', bpy.context.scene.SSB4UMT.out)
     print("Nud reference created")
-    
+
     polyNames_tmp = []
     polyNames = []
     replacePolys = []
-    
+
     #Grab names of ordered objects
     for i in bpy.context.scene.objects:
         polyNames_tmp.append(str(i)[21:-3])
+    #Reverse objects order to original
     for i in reversed(polyNames_tmp):
         polyNames.append(i)
+    #Create poly structure for inject
     for polyName, polynum in zip(polyNames,range(len(polyNames))):
         replacePolys.append(poly(polyName,polynum))
         for vert in bpy.context.scene.objects[polyName].data.vertices:
@@ -1043,11 +963,11 @@ def injectModel():
                     tmpref[x] = ' ' + tmpref[x]
             tmpref.append(' ')
             replacePolys[polynum].vertexCoords.append(tmpref)
-    
+
     f = open(bpy.context.scene.SSB4UMT.out + 'model.nud', 'rb+')
     polys = []
     verts = []
-    f.seek(0x0A, 1) 
+    f.seek(0x0A, 1)
     polyset_count = readu16be(f)
     f.seek(0x04, 1)
     face_clump_start = readu32be(f) + 0x30
@@ -1097,7 +1017,7 @@ def injectModel():
         vert_len = int(len(verts) / 3)
         f.seek(poly['positionb'])
         mystery = f.read(0x60)
-        mystery = binascii.hexlify(mystery)
+        #mystery = binascii.hexlify(mystery)
         f.seek(poly['positionb'] + 0x3c)
         bodygroup_id = readu32be(f)
         bodygroups[bodygroup_id] = poly['pgroup']
@@ -1114,7 +1034,7 @@ def injectModel():
                     #print("J:",j)
                     f.write(struct.pack(">f", float(replacePolys[i].vertexCoords[j][v])))
             if vert_size == 0x00:
-                f.seek(0x04, 1) 
+                f.seek(0x04, 1)
             elif vert_size == 0x06:
                 f.seek(0x08, 1)
             elif vert_size == 0x07:
@@ -1139,7 +1059,7 @@ def injectModel():
                     #print("J:",j)
                     f.write(struct.pack(">f", float(replacePolys[i].vertexCoords[j][v])))
                 if vert_size == 0x40:
-                    f.seek(0x04, 1) 
+                    f.seek(0x04, 1)
                 f.seek(0x08, 1)
                 if vert_size == 0x46:
                     f.seek(0x08, 1)
@@ -1148,133 +1068,3 @@ def injectModel():
         f.seek(next_poly_addr)
     f.close()
     print("Injection Complete!")
-    
-    
-#bpy.context.scene.SSB4UMT.nameGroups
-#file.write(str(obj.data.vertices[vertex].co)+'\n')
-
-# UI-------------------------------------------------------------------
-
-import bpy
-from bpy.props import (StringProperty,
-                       PointerProperty,
-                       BoolProperty
-                       )
-from bpy.types import (Panel,
-                       Operator,
-                       AddonPreferences,
-                       PropertyGroup,
-                       )
-
-
-class MySettings(PropertyGroup):
-    path = StringProperty(
-        name="",
-        description="Location of model files",
-        default="",
-        maxlen=1024,
-        subtype='DIR_PATH')
-    out = StringProperty(
-        name="",
-        description="Location of output files",
-        default="",
-        maxlen=1024,
-        subtype='DIR_PATH')
-    nudEnable = BoolProperty(
-        name="NUD",
-        description="Enables import of mesh from from vbn file",
-        default=True
-    )
-    vbnEnable = BoolProperty(
-        name="VBN",
-        description="Enables import of bones from from vbn file",
-        default=True
-    )
-    colormult = BoolProperty(
-        name="colormult",
-        description="",
-        default=True
-    )
-
-
-class ClearScene(bpy.types.Operator):
-    bl_label = "Clear Scene"
-    bl_idname = "clearscene.operator"
-    bl_description = "Clear the entire scene"
-
-    def execute(self, context):
-        bpy.ops.object.select_all()
-        bpy.ops.object.delete()
-        return {'FINISHED'}
-
-
-class RunImportCode(bpy.types.Operator):
-    bl_label = "Import"
-    bl_idname = "runimport.operator"
-    bl_description = "Import Model data"
-
-    def execute(self, context):
-        readModel()
-        return {'FINISHED'}
-
-
-class RunInjectCode(bpy.types.Operator):
-    bl_label = "Inject"
-    bl_idname = "runinject.operator"
-    bl_description = "Inject vertex data into file"
-    """
-    @classmethod
-    def poll(cls, context):
-        return False
-    """
-    def execute(self, context):
-        injectModel()
-        return {'FINISHED'}
-
-
-class OBJECT_PT_my_panel(Panel):
-    bl_idname = "ui.sm4shimporter"
-    bl_label = "Sm4sh Model Tool"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "scene"
-
-    def draw_header(self, context):
-        layout = self.layout
-        layout.label(icon="MESH_CUBE")
-
-    def draw(self, context):
-        layout = self.layout
-        scn = context.scene
-        mytool = scn.SSB4UMT
-
-        row = layout.column(align=True)
-        row.label("Model Directory")
-        row.prop(scn.SSB4UMT, "path", text="")
-        row.label("Output Directory")
-        row.prop(scn.SSB4UMT, "out", text="")
-
-        #row = layout.row(align=True)
-        # layout.prop(mytool, "nudEnable", text="NUD")
-        #layout.prop(mytool, "colormult", text="Colormult")
-
-        row = layout.row(align=True)
-        row.operator("clearscene.operator")
-
-        row = layout.row(align=True)
-        row.operator("runimport.operator")
-        row.operator("runinject.operator")
-
-
-def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.Scene.SSB4UMT = PointerProperty(type=MySettings)
-
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-    del bpy.types.Scene.SSB4UMT
-
-
-if __name__ == "__main__":
-    register()
