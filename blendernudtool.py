@@ -23,11 +23,12 @@ import shutil
 def readModel():
     clearConsole()
     nud = open(bpy.context.scene.SSB4UMT.path + 'model.nud', 'rb')
+    """
     if bpy.context.scene.SSB4UMT.vbnEnable == True:
         vbn = open(bpy.context.scene.SSB4UMT.path + 'model.vbn', 'rb')
     else:
         vbn = None
-
+    """
     # nut = open('model.nut','rb')
     colormult = bpy.context.scene.SSB4UMT.colormult
 
@@ -952,7 +953,8 @@ def readModel():
         bpy.context.scene.objects.link(myobject)
         mymesh.from_pydata(Vert_array, [], Face_array)
         mymesh.update(calc_edges=True)
-        '''mymesh.uv_textures.new("UV_Layer1")
+        """
+        mymesh.uv_textures.new("UV_Layer1")
         bm = bmesh.new()
         bm.from_mesh(mymesh)
         if not UV_array is None:
@@ -961,7 +963,8 @@ def readModel():
                 for loop in face.loops:
                     uv = UV_array[loop.vert.index]
                     loop[uv_layer].uv = (uv[0], uv[1])
-        bm.to_mesh(mymesh)'''
+        bm.to_mesh(mymesh)
+        """
 
     bpy.ops.object.select_all()
     bpy.ops.object.shade_smooth()
