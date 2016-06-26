@@ -56,6 +56,8 @@ class ClearScene(bpy.types.Operator):
     def execute(self, context):
         bpy.ops.object.select_all()
         bpy.ops.object.delete()
+        bpy.ops.object.select_all()
+        bpy.ops.object.delete()
         return {'FINISHED'}
 
 
