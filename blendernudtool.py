@@ -10,11 +10,9 @@ Credit:
         @Smb123w64gb
 """
 
-import bmesh  # , binascii
-from util import *
-
-# ReadData--------------------------------------------------------
-from copy import deepcopy as dp
+import bmesh
+from BitUtil import *
+import os
 from mathutils import Vector
 import bpy
 import shutil
@@ -22,13 +20,14 @@ import shutil
 
 def readModel():
     clearConsole()
-    nud = open(bpy.context.scene.SSB4UMT.path + 'model.nud', 'rb')
-    """
+    cwd = os.getcwd()
+    realpath = os.path.join(cwd, bpy.context.scene.SSB4UMT.path)
+    nud = open(realpath + '\\model.nud', 'rb')
     if bpy.context.scene.SSB4UMT.vbnEnable == True:
-        vbn = open(bpy.context.scene.SSB4UMT.path + 'model.vbn', 'rb')
+        vbn = open(realpath + '\\model.vbn', 'rb')
     else:
         vbn = None
-    """
+    bpy.context.scene.SSB4UMT.name_positioner = '[]'
     # nut = open('model.nut','rb')
     colormult = bpy.context.scene.SSB4UMT.colormult
 
@@ -80,11 +79,11 @@ def readModel():
         raise ValueError("Not a valid NDP3 file")
     else:
         print("NDP3 Verified")
+        
     fileSize = readu32be(nud)
-    unknownlong1 = readu16be(nud)  # <----- ?
+    unknownlong1 = readu16be(nud)
     polysets = readu16be(nud)
-    unknownshort2 = readu16be(nud)  # <----- ?
-    unknownsets1 = readu16be(nud)  # <----- ?
+    unknownlong2 = readu32be(nud)
     PolyClumpStart = readu32be(nud) + 48
     PolyClumpSize = readu32be(nud)
     VertexClumpStart = PolyClumpStart + PolyClumpSize
@@ -92,11 +91,10 @@ def readModel():
     VertexAddClumpStart = VertexClumpStart + VertexClumpSize
     VertexAddClumpSize = readu32be(nud)
     NameClumpStart = VertexAddClumpStart + VertexAddClumpSize
-    unknownFloat1 = readu32be(nud)  # <----- ?
-    unknownFloat2 = readu32be(nud)  # <----- ?
-    unknownFloat3 = readu32be(nud)  # <----- ?
-    unknownFloat4 = readu32be(nud)  # <----- ?
-
+    unknownFloat1 = readfloatbe(nud)
+    unknownFloat2 = readfloatbe(nud)
+    unknownFloat3 = readfloatbe(nud)
+    unknownFloat4 = readfloatbe(nud)
     # Model Extraction from NUD file
     ObjCount = 0
     for polyid in range(polysets):  # polysets -
@@ -161,7 +159,7 @@ def readModel():
             vbn.seek(int("1C",16))
             for x in range(BoneCount):
                 jumpman = vbn.tell() + int("44",16)
-                BoneName = getString(vbn)
+                BoneName = readString(vbn)
                 if x < 10:
                     BoneName = "00" + str(x+1) + ' - ' + BoneName
                 elif 100 > x > 9:
@@ -929,8 +927,6 @@ def readModel():
                     f3 += 1
                     FaceDirection *= -1
                     if f1 != f2 and f2 != f3 and f3 != f1:
-                        # if f1 >= vert_length or f2 >= vert_length or f3 >= vert_length:
-                        #    pass
                         if FaceDirection > 0:
                             Face_array.append([f3 - 1, f2 - 1, f1 - 1])
                         else:
@@ -942,9 +938,9 @@ def readModel():
                 fa = readu16be(nud)
                 fb = readu16be(nud)
                 fc = readu16be(nud)
-                # if fa >= vert_length or fb >= vert_length or fc >= vert_length:
-                #    break
                 Face_array.append([fa, fb, fc])
+                
+        #Add import data to scene
         nud.seek(NameClumpStart + PolyName_array[z])
         name = readString(nud)
         mymesh = bpy.data.meshes.new(name)
@@ -953,26 +949,22 @@ def readModel():
         bpy.context.scene.objects.link(myobject)
         mymesh.from_pydata(Vert_array, [], Face_array)
         mymesh.update(calc_edges=True)
-        """
-        mymesh.uv_textures.new("UV_Layer1")
-        bm = bmesh.new()
-        bm.from_mesh(mymesh)
-        if not UV_array is None:
-            uv_layer = bm.loops.layers.uv.new()
-            for face in bm.faces:
-                for loop in face.loops:
-                    uv = UV_array[loop.vert.index]
-                    loop[uv_layer].uv = (uv[0], uv[1])
-        bm.to_mesh(mymesh)
-        """
-
+        
+        
+    tmp_name = []
+    
+    
+    for obj in bpy.context.scene.objects:
+        tmp_name.append(obj.name)
+    
+    bpy.context.scene.SSB4UMT.name_positioner = str(tmp_name)
+    
     bpy.ops.object.select_all()
     bpy.ops.object.shade_smooth()
     bpy.ops.object.select_all()
     print("import successful!")
 
 # Inject code
-
 
 def injectModel():
     class poly(object):
@@ -987,15 +979,12 @@ def injectModel():
                  'model.nud', bpy.context.scene.SSB4UMT.out)
     print("Nud reference created")
 
-    polyNames_tmp = []
+
     polyNames = []
     replacePolys = []
-
-    # Grab names of ordered objects
-    for i in bpy.context.scene.objects:
-        polyNames_tmp.append(str(i)[21:-3])
+    
     # Reverse objects order to original
-    for i in reversed(polyNames_tmp):
+    for i in reversed(eval(bpy.context.scene.SSB4UMT.name_positioner)):
         polyNames.append(i)
     # Create poly structure for inject
     for polyName, polynum in zip(polyNames, range(len(polyNames))):
@@ -1045,6 +1034,7 @@ def injectModel():
                           'pgroup': i
                           })
     for i, poly in enumerate(polys):
+        print(polyNames[i])
         next_poly_addr = f.tell() + 0x30
         face_start = readu32be(f) + face_clump_start
         vert_start = readu32be(f) + vert_clump_start
@@ -1076,7 +1066,6 @@ def injectModel():
                 vz = 0
             if not vert_size >= 0x40:
                 for v in range(3):
-                    # print("J:",j)
                     f.write(
                         struct.pack(
                             ">f", float(
@@ -1104,7 +1093,6 @@ def injectModel():
             f.seek(vert_add_start)
             for j in range(vert_count):
                 for v in range(3):
-                    # print("J:",j)
                     f.write(
                         struct.pack(
                             ">f", float(

@@ -1,29 +1,30 @@
 import bpy
-from blendernudtool import *
-
-bl_info = {
-    "name": "Nud Tool",
-    "author": "Astril & Smb123w64gb",
-    "version": (0, 2),
-    "blender": (2, 75, 0),
-    "location": "Properties > Scene",
-    "description": "Tool for working with NUD files",
-    "warning": "Only mesh editing currently able",
-    "category": "User Interface",
-}
-
 from bpy.props import (StringProperty,
                        PointerProperty,
-                       BoolProperty
-                       )
+                       BoolProperty,
+                       CollectionProperty)
 from bpy.types import (Panel,
                        Operator,
                        AddonPreferences,
-                       PropertyGroup,
-                       )
-
+                       PropertyGroup)
+from blendernudtool import *
+bl_info = {
+    "name": "Nud Tool",
+    "author": "Astril & Smb123w64gb",
+    "version": (0, 3),
+    "blender": (2, 75, 0),
+    "location": "Properties > Scene",
+    "description": "Tool for working with NUD files",
+    "warning": "Only mesh editing/importing currently available",
+    "wiki_url": "https://github.com/AstrilKnight/Blender-NUD-Tool",
+    "category": "User Interface",
+}
 
 class MySettings(PropertyGroup):
+    name_positioner = StringProperty(
+        name="",
+        description="name position var",
+        default='[]')
     path = StringProperty(
         name="",
         description="Location of model files",
@@ -39,7 +40,7 @@ class MySettings(PropertyGroup):
     vbnEnable = BoolProperty(
         name="VBN",
         description="Enables import of bones from from vbn file",
-        default=True
+        default=False
     )
     colormult = BoolProperty(
         name="colormult",
@@ -75,11 +76,6 @@ class RunInjectCode(bpy.types.Operator):
     bl_label = "Inject"
     bl_idname = "runinject.operator"
     bl_description = "Inject vertex data into file"
-    """
-    @classmethod
-    def poll(cls, context):
-        return False
-    """
 
     def execute(self, context):
         injectModel()
@@ -88,7 +84,7 @@ class RunInjectCode(bpy.types.Operator):
 
 class OBJECT_PT_my_panel(Panel):
     bl_idname = "ui.sm4shimporter"
-    bl_label = "Sm4sh Model Tool"
+    bl_label = "NUD Tool"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -107,8 +103,8 @@ class OBJECT_PT_my_panel(Panel):
         row.prop(scn.SSB4UMT, "path", text="")
         row.label("Output Directory")
         row.prop(scn.SSB4UMT, "out", text="")
-
-        row = layout.row(align=True)
+        
+        #row = layout.row(align=True)
         #layout.prop(mytool, "vbnEnable", text="VBN")
         #layout.prop(mytool, "colormult", text="ColorMult")
 
