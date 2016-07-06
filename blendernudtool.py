@@ -13,10 +13,32 @@ Credit:
 import bmesh
 from BitUtil import *
 import os
-from mathutils import Vector
+#from mathutils import Vector
 import bpy
 import shutil
 
+
+class Bone_Info_Struct:
+        structType = "bone"
+        def __init__(self,Bone1,Bone2,Bone3,Bone4):
+            self.Bone1 = Bone1
+            self.Bone2 = Bone2
+            self.Bone3 = Bone3
+            self.Bone4 = Bone4
+        
+        
+class Weight_Info_Struct:
+    structType = "weightData"
+    def __init__(self,Weight1,Weight2,Weight3,Weight4):
+        self.Weight1 = Weight1
+        self.Weight2 = Weight2
+        self.Weight3 = Weight3
+        self.Weight4 = Weight4
+    
+class weight_data_struct:
+    def __init__(self,boneids,weights):
+        self.boneids = boneids
+        self.weights = weights
 
 def readModel():
     clearConsole()
@@ -31,17 +53,6 @@ def readModel():
     # nut = open('model.nut','rb')
     colormult = bpy.context.scene.SSB4UMT.colormult
 
-    Bone_Info_Struct = {
-        'Bone1': None,
-        'Bone2': None,
-        'Bone3': None,
-        'Bone4': None}
-    Weight_Info_Struct = {
-        'Weight1': None,
-        'Weight2': None,
-        'Weight3': None,
-        'Weight4': None}
-    weight_data_struct = {'boneids': None, 'weights': None}
 
     BoneCount = []
     BoneName_Array = []
@@ -97,7 +108,7 @@ def readModel():
     unknownFloat4 = readfloatbe(nud)
     # Model Extraction from NUD file
     ObjCount = 0
-    for polyid in range(polysets):  # polysets -
+    for polyid in range(polysets):  # polysets
         floata = readu32be(nud)
         floatb = readu32be(nud)
         floatc = readu32be(nud)
@@ -233,59 +244,54 @@ def readModel():
                 colorr = readByte(nud)
                 colorg = readByte(nud)
                 colorb = readByte(nud)
-                colora = readByte(nud)
+                colora = readByte(nud) / 127
+                if colora >= 254:
+                    colora = 255
+                if colormult == True:
+                    colorr = colorr * 2
+                    colorg = colorg * 2
+                    colorb = colorb * 2
+                    if colorr >= 254:
+                        colorr = 255
+                    if colorg >= 254:
+                        colorg = 255
+                    if colorb >= 254:
+                        colorb = 255
+                tu = readhalffloatbe(nud) * 2
+                tv = ((readhalffloatbe(nud) * 2) * -1) + 1
+                if UVSize_array[z] >= 0x22:
+                    tu2 = readhalffloatbe(nud) * 2
+                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                    UV2_array.append([tu2,tv2,0])
+                if UVSize_array[z] >= 0x32:
+                    tu3 = readhalffloatbe(nud) * 2
+                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                    UV2_array.append([tu3,tv3,0])
+                if UVSize_array[z] >= 0x42:
+                    tu4 = readhalffloatbe(nud) * 2
+                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                    UV2_array.append([tu4,tv4,0])
                 Bone1 = SingleBind_array[z]
                 Bone2 = 0
                 Bone3 = 0
                 Bone4 = 0
-                Weight1 = 1
+                Weight1 = 0
                 Weight2 = 0
                 Weight3 = 0
                 Weight4 = 0
-                if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                        z] == 0x42:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colora >= 254:
-                        colora = 155
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                tu = readhalffloatbe(nud) * 2
-                tv = readhalffloatbe(nud) * -2 + 1
-                if UVSize_array[z] >= 0x22:
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu2, tv2, 0])
-                if UVSize_array[z] >= 0x32:
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV3_array.append([tu3, tv3, 0])
-                if UVSize_array[z] >= 0x42:
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV4_array.append([tu4, tv4, 0])
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
-
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
         elif VertexSize_array[z] == 0x06:
             name = "0x06"
             for x in range(VertexAmount_array[z]):
@@ -345,13 +351,14 @@ def readModel():
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
-
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
         elif VertexSize_array[z] == 0x07:
             name = "0x07"
             for x in range(VertexAmount_array[z]):
@@ -419,12 +426,14 @@ def readModel():
                 Color_array.append([colorr, colorg, colorb])
                 Alpha_array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
 
         elif VertexSize_array[z] == 0x08:
             name = "0x08"
@@ -486,12 +495,14 @@ def readModel():
                 Color_Array.append([colorr, colorg, colorb])
                 Alpha_Array.append(colora)
                 UV_array.append([tu, tv, 0])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
         elif VertexSize_array[z] == 0x11:
             if UVSize_array[z] == 0x10:
                 for x in range(VertexAmount_array[z]):
@@ -583,12 +594,14 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
 
         elif VertexSize_array[z] == 0x46:
             name = "0x46"
@@ -736,12 +749,14 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
 
         elif VertexSize_array[z] == 0x47:
             name = "0x47"
@@ -899,12 +914,14 @@ def readModel():
                 Weight4 = readByte(nud) / 255
                 Vert_array.append([vx, vy, vz])
                 Normal_array.append([nx, ny, nz])
-                B1_array.append({"Bone1": Bone1, "Bone2": Bone2,
-                                 "Bone3": Bone3, "Bone4": Bone4})
-                W1_array.append({"Weight1": Weight1,
-                                 "Weight2": Weight2,
-                                 "Weight3": Weight3,
-                                 "Weight4": Weight4})
+                B1_array.append(Bone_Info_Struct(Bone1,
+                                                 Bone2,
+                                                 Bone3,
+                                                 Bone4))
+                W1_array.append(Weight_Info_Struct(Weight1,
+                                                   Weight2,
+                                                   Weight3,
+                                                   Weight4))
 
         vert_length = len(Vert_array)
         nud.seek(PolyStart_array[z])
