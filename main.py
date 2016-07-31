@@ -11,7 +11,7 @@ from blendernudtool import *
 bl_info = {
     "name": "Nud Tool",
     "author": "Astril & Smb123w64gb",
-    "version": (0, 3),
+    "version": (0, 4),
     "blender": (2, 75, 0),
     "location": "Properties > Scene",
     "description": "Tool for working with NUD files",

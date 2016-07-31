@@ -233,695 +233,104 @@ def readModel():
         W1_array = []
         Weight_array = []
         nud.seek(VertexStart_array[z])
-
-        if VertexSize_array[z] == 0x00:
-            name = "0x00"
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                unknownfloat = readfloatbe(nud)
-                colorr = readByte(nud)
-                colorg = readByte(nud)
-                colorb = readByte(nud)
-                colora = readByte(nud) / 127
-                if colora >= 254:
-                    colora = 255
-                if colormult == True:
-                    colorr = colorr * 2
-                    colorg = colorg * 2
-                    colorb = colorb * 2
-                    if colorr >= 254:
-                        colorr = 255
-                    if colorg >= 254:
-                        colorg = 255
-                    if colorb >= 254:
-                        colorb = 255
-                tu = readhalffloatbe(nud) * 2
-                tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                if UVSize_array[z] >= 0x22:
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu2,tv2,0])
-                if UVSize_array[z] >= 0x32:
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu3,tv3,0])
-                if UVSize_array[z] >= 0x42:
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu4,tv4,0])
-                Bone1 = SingleBind_array[z]
-                Bone2 = 0
-                Bone3 = 0
-                Bone4 = 0
-                Weight1 = 0
-                Weight2 = 0
-                Weight3 = 0
-                Weight4 = 0
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                Color_array.append([colorr, colorg, colorb])
-                Alpha_array.append(colora)
-                UV_array.append([tu, tv, 0])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-        elif VertexSize_array[z] == 0x06:
-            name = "0x06"
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                nx = readhalffloatbe(nud)
-                ny = readhalffloatbe(nud)
-                nz = readhalffloatbe(nud)
-                nq = readhalffloatbe(nud)
-                Bone1 = SingleBind_array[z]
-                Bone2 = 0
-                Bone3 = 0
-                Bone4 = 0
-                Weight1 = 1
-                Weight2 = 0
-                Weight3 = 0
-                Weight4 = 0
-                colorr = 255
-                colorg = 255
-                colorb = 255
-                colora = 255
-                if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                        z] == 0x42:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colora >= 254:
-                        colora = 155
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                tu = readhalffloatbe(nud) * 2
-                tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                if UVSize_array[z] >= 0x22:
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu2, tv2, 0])
-                if UVSize_array[z] >= 0x32:
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV3_array.append([tu3, tv3, 0])
-                if UVSize_array[z] >= 0x42:
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV4_array.append([tu4, tv4, 0])
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                Color_array.append([colorr, colorg, colorb])
-                Alpha_array.append(colora)
-                UV_array.append([tu, tv, 0])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-        elif VertexSize_array[z] == 0x07:
-            name = "0x07"
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                nx = readhalffloatbe(nud)
-                ny = readhalffloatbe(nud)
-                nz = readhalffloatbe(nud)
-                nq = readhalffloatbe(nud)
-                nx2 = readhalffloatbe(nud)
-                ny2 = readhalffloatbe(nud)
-                nz2 = readhalffloatbe(nud)
-                nq2 = readhalffloatbe(nud)
-                nx3 = readhalffloatbe(nud)
-                ny3 = readhalffloatbe(nud)
-                nz3 = readhalffloatbe(nud)
-                nq3 = readhalffloatbe(nud)
-                tu = readhalffloatbe(nud) * 2
-                tv = readhalffloatbe(nud) * -2 + 1
-                Bone1 = SingleBind_array[z]
-                Bone2 = 0
-                Bone3 = 0
-                Bone4 = 0
-                Weight1 = 1
-                Weight2 = 0
-                Weight3 = 0
-                Weight4 = 0
-                colorr = 255
-                colorg = 255
-                colorb = 255
-                colora = 255
-                if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                        z] == 0x42:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colora >= 254:
-                        colora = 155
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                if UVSize_array[z] >= 0x22:
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu2, tv2, 0])
-                if UVSize_array[z] >= 0x32:
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV3_array.append([tu3, tv3, 0])
-                if UVSize_array[z] >= 0x42:
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV4_array.append([tu4, tv4, 0])
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                Color_array.append([colorr, colorg, colorb])
-                Alpha_array.append(colora)
-                UV_array.append([tu, tv, 0])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-
-        elif VertexSize_array[z] == 0x08:
-            name = "0x08"
-            for x in range(VertexAmount_array[z]):
-                vx = 0
-                vy = 0
-                vz = 0
-                nx = readhalffloatbe(nud)
-                ny = readhalffloatbe(nud)
-                nz = readhalffloatbe(nud)
-                nq = readhalffloatbe(nud)
-                nx2 = readhalffloatbe(nud)
-                ny2 = readhalffloatbe(nud)
-                nz2 = readhalffloatbe(nud)
-                nq2 = readhalffloatbe(nud)
-                nx3 = readhalffloatbe(nud)
-                Bone1 = SingleBind_array[z]
-                Bone2 = 0
-                Bone3 = 0
-                Bone4 = 0
-                Weight1 = 1
-                Weight2 = 0
-                Weight3 = 0
-                Weight4 = 0
-                tu = readhalffloatbe(nud) * 2
-                tv = readhalffloatbe(nud) * 2
-                if UVSize_array[z] == 0x12 or UVSize_array[z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[
-                        z] == 0x42:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colora >= 254:
-                        colora = 155
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                if UVSize_array[z] >= 0x22:
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV2_array.append([tu2, tv2, 0])
-                if UVSize_array[z] >= 0x32:
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV3_array.append([tu3, tv3, 0])
-                if UVSize_array[z] >= 0x42:
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV4_array.append([tu4, tv4, 0])
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                Color_Array.append([colorr, colorg, colorb])
-                Alpha_Array.append(colora)
-                UV_array.append([tu, tv, 0])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-        elif VertexSize_array[z] == 0x11:
-            if UVSize_array[z] == 0x10:
-                for x in range(VertexAmount_array[z]):
-                    colorr = 127
-                    colorg = 127
-                    colorb = 127
-                    colora = 1
-                    if colormult == True:
-                        colorr = colorr * 2
-                        colorg = colorg * 2
-                        colorb = colorb * 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                        tu = readfloatbe(nud) * 2
-                        tv = ((readfloatbe(nud) * 2) * -1) + 1
+        for x in range(VertexAmount_array[z]):
+                if VertexSize_array[z] != 0x08 and VertexSize_array[z] >= 0x40:
+                        vx = readfloatbe(nud)
+                        vy = readfloatbe(nud)
+                        vz = readfloatbe(nud)
+                elif VertexSize_array[z] == 0x08:
+                        vx = 0
+                        vy = 0
+                        vz = 0
+                if VertexSize_array[z] == 0x00:
+                        unknownfloat = readfloatbe(nud)
+                if VertexSize_array[z] >= 0x06:
+                        nx = readhalffloatbe(nud)
+                        ny = readhalffloatbe(nud)
+                        nz = readhalffloatbe(nud)
+                        nq = readhalffloatbe(nud)
+                        if VertexSize_array[z] == 0x07:
+                                nud.seek(0x10, 1)
+                        elif VertexSize_array[z] == 0x08:
+                                nud.seek(0xA, 1)
+                        if UVSize_array[z] == 0x10:
+                                tu = readhalffloatbe(nud) * 2
+                                tv = ((readhalffloatbe(nud) * 2) * -1) + 1
+                        if UVSize_array[z] >= 0x12:
+                                colorr = readByte(nud)
+                                colorg = readByte(nud)
+                                colorb = readByte(nud)
+                                colora = readByte(nud) / 127
+                                tu = readhalffloatbe(nud) * 2
+                                tv = ((readhalffloatbe(nud) * 2) * -1) + 1
+                        if UVSize_array[z] >= 0x22:
+                            tu2 = readhalffloatbe(nud) * 2
+                            tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                            UV2_array.append([tu2,tv2,0])
+                        if UVSize_array[z] >= 0x32:
+                            tu3 = readhalffloatbe(nud) * 2
+                            tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                            UV2_array.append([tu3,tv3,0])
+                        if UVSize_array[z] >= 0x42:
+                            tu4 = readhalffloatbe(nud) * 2
+                            tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
+                            UV2_array.append([tu4,tv4,0])
+                        Bone1 = SingleBind_array[z]
+                        Bone2 = 0
+                        Bone3 = 0
+                        Bone4 = 0
+                        Weight1 = 0
+                        Weight2 = 0
+                        Weight3 = 0
+                        Weight4 = 0
+                        Color_array.append([colorr, colorg, colorb])
+                        Alpha_array.append(colora)
                         UV_array.append([tu, tv, 0])
-                        Color_Array.append([colorr, colorg, colorb])
-                        Alpha_Array.append(colora)
-        elif VertexSize_array[z] == 0x12:
-            for x in range(VertexAmount_array[z]):
-                colorr = readByte(nud)
-                colorg = readByte(nud)
-                colorb = readByte(nud)
-                colora = readByte(nud) / 127
-                if colormult == True:
-                    colorr = colorr * 2
-                    colorg = colorg * 2
-                    colorb = colorb * 2
-                    if colorr >= 254:
-                        colorr = 255
-                    if colorg >= 254:
-                        colorg = 255
-                    if colorb >= 254:
-                        colorb = 255
-                    tu = readfloatbe(nud) * 2
-                    tv = ((readfloatbe(nud) * 2) * -1) + 1
-                    UV_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-        elif VertexSize_array[z] == 0x40:
-            name = "0x40"
-            if UVSize_array[z] == 0x12 or UVSize_array[
-                    z] == 0x22 or UVSize_array[z] == 0x32 or UVSize_array[z] == 0x42:
-                colorr = readByte(nud)
-                colorg = readByte(nud)
-                colorb = readByte(nud)
-                colora = readByte(nud) / 127
-                if colora >= 254:
-                    colora = 155
-                if colormult == True:
-                    colorr = colorr * 2
-                    colorg = colorg * 2
-                    colorb = colorb * 2
-                    if colorr >= 254:
-                        colorr = 255
-                    if colorg >= 254:
-                        colorg = 255
-                    if colorb >= 254:
-                        colorb = 255
-            if UVSize_array[z] >= 0x22:
-                tu2 = readhalffloatbe(nud) * 2
-                tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                UV2_array.append([tu2, tv2, 0])
-            if UVSize_array[z] >= 0x32:
-                tu3 = readhalffloatbe(nud) * 2
-                tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                UV3_array.append([tu3, tv3, 0])
-            if UVSize_array[z] >= 0x42:
-                tu4 = readhalffloatbe(nud) * 2
-                tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                UV4_array.append([tu4, tv4, 0])
-            nud.seek(VertexAddStart_array[z])
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                unknownfloat = readfloatbe(nud)
-                Bone1 = readByte(nud) + 1
-                Bone2 = readByte(nud) + 1
-                Bone3 = readByte(nud) + 1
-                Bone4 = readByte(nud) + 1
-                Weight1 = readByte(nud) / 255
-                Weight2 = readByte(nud) / 255
-                Weight3 = readByte(nud) / 255
-                Weight4 = readByte(nud) / 255
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-
-        elif VertexSize_array[z] == 0x46:
-            name = "0x46"
-            if UVSize_array[z] == 0x10:
+                        if VertexSize_array[z] < 0x40:
+                                Vert_array.append([vx, vy, vz])
+                                Normal_array.append([nx, ny, nz])
+                                B1_array.append(Bone_Info_Struct(Bone1,
+                                                                 Bone2,
+                                                                 Bone3,
+                                                                 Bone4))
+                                W1_array.append(Weight_Info_Struct(Weight1,
+                                                                   Weight2,
+                                                                   Weight3,
+                                                                   Weight4))
+        if VertexSize_array[z] >= 0x40:
+                nud.seek(VertexAddStart_array[z])
                 for x in range(VertexAmount_array[z]):
-                    colorr = 127
-                    colorg = 127
-                    colorb = 127
-                    colora = 1
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
+                        vx = readfloatbe(nud)
+                        vy = readfloatbe(nud)
+                        vz = readfloatbe(nud)
+                        if VertexSize_array[z] == 0x40:
+                                unknownfloat = readfloatbe(nud)
+                        if VertexSize_array[z] >= 0x46:
+                                nx = readhalffloatbe(nud)
+                                ny = readhalffloatbe(nud)
+                                nz = readhalffloatbe(nud)
+                                nq = readhalffloatbe(nud)
+                                if VertexSize_array[z] == 0x47:
+                                        nud.seek(0x10,1)
+                        Bone1 = readByte(nud) + 1
+                        Bone2 = readByte(nud) + 1
+                        Bone3 = readByte(nud) + 1
+                        Bone4 = readByte(nud) + 1
+                        Weight1 = readByte(nud) / 255
+                        Weight2 = readByte(nud) / 255
+                        Weight3 = readByte(nud) / 255
+                        Weight4 = readByte(nud) / 255
+                        Vert_array.append([vx, vy, vz])
+                        Normal_array.append([nx, ny, nz])
+                        B1_array.append(Bone_Info_Struct(Bone1,
+                                                         Bone2,
+                                                         Bone3,
+                                                         Bone4))
+                        W1_array.append(Weight_Info_Struct(Weight1,
+                                                           Weight2,
+                                                           Weight3,
+                                                           Weight4))
 
-            if UVSize_array[z] == 0x12:
-                for x in VertexAmount_array:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x22:
-                for x in VertexAmount_array:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x32:
-                for x in VertexAmount_array:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = readhalffloatbe(nud) * -2 + 1
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    UV3_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x42:
-                for x in VertexAmount_array:
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = readhalffloatbe(nud) * -2 + 1
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = readhalffloatbe(nud) * -2 + 1
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    UV3_array.append([tu, tv, 0])
-                    UV4_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-
-            nud.seek(VertexAddStart_array[z])
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                nx = readhalffloatbe(nud)
-                ny = readhalffloatbe(nud)
-                nz = readhalffloatbe(nud)
-                nq = readhalffloatbe(nud)
-                Bone1 = readByte(nud) + 1
-                Bone2 = readByte(nud) + 1
-                Bone3 = readByte(nud) + 1
-                Bone4 = readByte(nud) + 1
-                Weight1 = readByte(nud) / 255
-                Weight2 = readByte(nud) / 255
-                Weight3 = readByte(nud) / 255
-                Weight4 = readByte(nud) / 255
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
-
-        elif VertexSize_array[z] == 0x47:
-            name = "0x47"
-            if UVSize_array[z] == 0x10:
-                for x in range(VertexAmount_array[z]):
-                    colorr = 127
-                    colorg = 127
-                    colorb = 127
-                    colora = 1
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-
-            if UVSize_array[z] == 0x12:
-                for x in range(VertexAmount_array[z]):
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = readhalffloatbe(nud) * -2 + 1
-                    UV_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x22:
-                for x in range(VertexAmount_array[z]):
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colora >= 254:
-                        colora = 255
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x32:
-                for x in range(VertexAmount_array[z]):
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu2, tv2, 0])
-                    UV3_array.append([tu3, tv3, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-            if UVSize_array[z] == 0x42:
-                for x in range(VertexAmount_array[z]):
-                    colorr = readByte(nud)
-                    colorg = readByte(nud)
-                    colorb = readByte(nud)
-                    colora = readByte(nud) / 127
-                    if colormult == True:
-                        colorr *= 2
-                        colorg *= 2
-                        colorb *= 2
-                        if colorr >= 254:
-                            colorr = 255
-                        if colorg >= 254:
-                            colorg = 255
-                        if colorb >= 254:
-                            colorb = 255
-                    tu = readhalffloatbe(nud) * 2
-                    tv = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu2 = readhalffloatbe(nud) * 2
-                    tv2 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu3 = readhalffloatbe(nud) * 2
-                    tv3 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    tu4 = readhalffloatbe(nud) * 2
-                    tv4 = ((readhalffloatbe(nud) * 2) * -1) + 1
-                    UV_array.append([tu, tv, 0])
-                    UV2_array.append([tu, tv, 0])
-                    UV3_array.append([tu, tv, 0])
-                    UV4_array.append([tu, tv, 0])
-                    Color_Array.append([colorr, colorg, colorb])
-                    Alpha_Array.append(colora)
-
-            nud.seek(VertexAddStart_array[z])
-            for x in range(VertexAmount_array[z]):
-                vx = readfloatbe(nud)
-                vy = readfloatbe(nud)
-                vz = readfloatbe(nud)
-                nx = readhalffloatbe(nud)
-                ny = readhalffloatbe(nud)
-                nz = readhalffloatbe(nud)
-                nq = readhalffloatbe(nud)
-                nx2 = readhalffloatbe(nud)
-                ny2 = readhalffloatbe(nud)
-                nz2 = readhalffloatbe(nud)
-                nq2 = readhalffloatbe(nud)
-                nx3 = readhalffloatbe(nud)
-                ny3 = readhalffloatbe(nud)
-                nz3 = readhalffloatbe(nud)
-                nq3 = readhalffloatbe(nud)
-                Bone1 = readByte(nud) + 1
-                Bone2 = readByte(nud) + 1
-                Bone3 = readByte(nud) + 1
-                Bone4 = readByte(nud) + 1
-                Weight1 = readByte(nud) / 255
-                Weight2 = readByte(nud) / 255
-                Weight3 = readByte(nud) / 255
-                Weight4 = readByte(nud) / 255
-                Vert_array.append([vx, vy, vz])
-                Normal_array.append([nx, ny, nz])
-                B1_array.append(Bone_Info_Struct(Bone1,
-                                                 Bone2,
-                                                 Bone3,
-                                                 Bone4))
-                W1_array.append(Weight_Info_Struct(Weight1,
-                                                   Weight2,
-                                                   Weight3,
-                                                   Weight4))
 
         vert_length = len(Vert_array)
         nud.seek(PolyStart_array[z])
